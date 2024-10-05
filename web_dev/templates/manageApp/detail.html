@@ -1,0 +1,32 @@
+<!-- reservations/detail.html -->
+
+
+{% block content %}
+<h1>Reservation Details</h1>
+<p>Name: {{ reservation.name }}</p>
+<p>VIP Number: {{ reservation.vip_number }}</p>
+<p>Doctor Name: {{ reservation.doctor_name }}</p>
+<p>Loan Length: {{ reservation.loan_length }} days</p>
+<p>Earliest Start Date: {{ reservation.earliest_start_date }}</p>
+<p>Contact Detail: {{ reservation.contact_detail }}</p>
+<a href="{% url 'home' %}">Back to List</a>
+{% endblock %}
+
+<head>
+    <title>Patient Detail - VIP {{ vip_number }}</title>
+    <meta charset="utf-8">
+    <!-- Include Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Patient Detail for VIP {{ vip_number }}</h1>
+    
+    <h2>IOP OD Left Over Time</h2>
+    {{ graph_div_left|safe }}
+
+    <h2>IOP OD Right Over Time</h2>
+    {{ graph_div_right|safe }}
+
+    <a href="{% url 'home' %}">Back to Home</a>
+</body>
+</html>

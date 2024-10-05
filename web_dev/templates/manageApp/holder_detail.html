@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Holder Detail</title>
+</head>
+<body>
+    <h1>Items held by {{ name }}</h1>
+    <ul>
+        {% for item in items %}
+        <li>{{ item.name }} - Expected Return Date: {{ item.expected_return_date }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'item_list' %}">Back to item list</a>
+</body>
+</html>

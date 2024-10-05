@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Borrowing System</title>
+</head>
+<body>
+    <h1>Management System</h1>
+    
+    <h2>devices</h2>
+    
+    </form>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Serial Number</th>
+                <th>Name</th>
+                <th>On Loan</th>
+                <th>Holder</th>
+                <th>Expected Return Date</th>
+                <th>Delete</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in devices %}
+            <tr>
+                <td>{{ device.serial_number }}</td>
+                <td>{{ device.name }}</td>
+                <td>{{ device.on_loan }}</td>
+                <td>{{ device.holder }}</td>
+                <td>{{ device.expected_return_date }}</td>
+                <td><a href="{% url 'delete_device' device.id %}">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'add_device' %}"><button>Add New Device</button></a>
+    <!--add a link in here-->
+
+
+    <h2>Reservations</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>VIP Number</th>
+                <th>Doctor Name</th>
+                <th>Loan Length</th>
+                <th>Earliest Start Date</th>
+                <th>Contact Detail</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.name }}</td>
+                <td>{{ reservation.vip_number }}</td>
+                <td>{{ reservation.doctor_name }}</td>
+                <td>{{ reservation.loan_length }}</td>
+                <td>{{ reservation.earliest_start_date }}</td>
+                <td>{{ reservation.contact_detail }}</td>
+                <td><a href="{% url 'delete_reservation' reservation.id %}">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+<a href="add_patient">add reservation<a>
+</html>

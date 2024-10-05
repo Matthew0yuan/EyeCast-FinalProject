@@ -30,9 +30,9 @@ def add_device(request):
         form = deviceForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')  # Redirect to the same page to prevent double submissions
+            return redirect('home')
     else:
-        form = deviceForm()  # Create an empty form for GET request
+        form = deviceForm()  #Create an empty form for GET request
     Devices = devices.objects.all()
     return render(request, 'manageApp/add_device.html', {
         'form': form,
@@ -44,9 +44,9 @@ def add_reservation(request):
         form = ReservationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')  # Redirect to the same page to prevent double submissions
+            return redirect('home')  #Redirect to the same page to prevent double submissions
     else:
-        form = ReservationForm()  # Create an empty form for GET request
+        form = ReservationForm()  #Create an empty form for GET request
         #reservations = Reservation.objects.all()
     return render(request, 'manageApp/add_reservation.html', {
         'form': form,
@@ -57,10 +57,10 @@ def add_reservation(request):
 def delete_reservation(request, reservation_id):#keep on working on deleting selecting button
     reservation = get_object_or_404(Reservation, id=reservation_id)
     reservation.delete()
-    return redirect('home')  # Redirect back to the home page after deletion
+    return redirect('home')  #Redirect back to the home page after deletion
 
 def delete_device(request, device_id):
-    device = get_object_or_404(devices, id=device_id)  # Assuming your model is named `devices`, consider renaming it to `Device` for convention
+    device = get_object_or_404(devices, id=device_id)
     device.delete()
     return redirect('home')
 
@@ -101,7 +101,6 @@ def upload_csv(request):
             file = request.FILES['file']
             decoded_file = file.read().decode('utf-8').splitlines()
             reader = csv.DictReader(decoded_file)
-#edit this part for taking into the data correctly
             for row in reader:
                 #print(row)
                 ReservationData.objects.create(
@@ -126,7 +125,7 @@ def reservation_detail(request, reservation_id):
     # if not data.exists():
     #     return render(request, 'patient_not_found.html', {'vip_number': reservation_id})
 
-    # Convert QuerySet to DataFrame
+    #Convert QuerySet to DataFrame
     df = pd.DataFrame(list(data.values()))
     print(data)
 
@@ -139,7 +138,7 @@ def reservation_detail(request, reservation_id):
     #df['time_slot'] = (df['capture_time'].dt.hour // 2) * 2
     #df['time_slot'] = df['time_slot'].astype(str) + ":00"
 
-    # Plotly figures
+    #Plotly figures
 
     fig_left_eye = px.scatter(
         df,
@@ -150,7 +149,7 @@ def reservation_detail(request, reservation_id):
         hover_data={'capture_date': True} 
     )
 
-    # Example: Plot IOP_OD_right over time
+    #right eyes
     fig_right_eye = px.scatter(
         df,
         x='capture_time',
@@ -160,10 +159,11 @@ def reservation_detail(request, reservation_id):
         hover_data={'capture_date': True} 
     )
     
+    #candle graph
     df['datetime'] = pd.to_datetime(df['capture_date'].astype(str) + ' ' + df['capture_time'].astype(str))
-    # Setting datetime as the index
+    #Setting datetime as the index
     df.set_index('datetime', inplace=True)
-    # Resample data into 2-hour bins for candlestick chart
+    #Resample data into 2-hour bins for candlestick chart
     resampled = df['IOP_OD_left'].resample('2H').agg(['min', 'max', 'mean'])
 
     # Create a candlestick
@@ -175,7 +175,7 @@ def reservation_detail(request, reservation_id):
         close=resampled['mean']
     )])
 
-    # Update layout for the candlestick chart
+    #Update layout for the candlestick chart
     candlestick_fig.update_layout(
         title='IOP OD Left Readings Over Time',
         xaxis_title='Time',
@@ -183,11 +183,11 @@ def reservation_detail(request, reservation_id):
         xaxis_rangeslider_visible=False
     )
 
-    # Convert figures to HTML
+    #Convert figures to HTML
     graph_div_left = fig_left_eye.to_html(full_html=False)
     graph_div_right = fig_right_eye.to_html(full_html=False)
     graph_div_candlestick = candlestick_fig.to_html(full_html=False)
-    # Render the template
+    #Render the template
     return render(request, 'manageApp/detail.html', {
         'graph_div_left': graph_div_left,
         'graph_div_right': graph_div_right,

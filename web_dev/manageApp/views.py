@@ -158,7 +158,7 @@ def reservation_detail(request, reservation_id):
         labels={'capture_time': 'Time', 'IOP_OS_right': 'IOP OS Right'},
         hover_data={'capture_date': True} 
     )
-    
+
     #candle graph
     df['datetime'] = pd.to_datetime(df['capture_date'].astype(str) + ' ' + df['capture_time'].astype(str))
     #Setting datetime as the index
@@ -194,3 +194,4 @@ def reservation_detail(request, reservation_id):
         'graph_div_candlestick': graph_div_candlestick,
         'vip_number': reservation_id,
     })
+

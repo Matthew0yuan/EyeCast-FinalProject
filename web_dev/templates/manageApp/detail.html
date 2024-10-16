@@ -15,7 +15,6 @@
 <head>
     <title>Patient Detail - VIP {{ vip_number }}</title>
     <meta charset="utf-8">
-    <!-- Include Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
@@ -27,6 +26,8 @@
     <h2>IOP OD Right Over Time</h2>
     {{ graph_div_right|safe }}
 
+    <h2>candle graph</h2>
+    {{ graph_div_candlestick|safe }}
     <a href="{% url 'home' %}">Back to Home</a>
 </body>
 </html>

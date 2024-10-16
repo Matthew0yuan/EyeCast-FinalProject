@@ -11,6 +11,9 @@ import csv
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+#for API
+from django.views.decorators.csrf import csrf_exempt
+import json
 # Create your views here.
 #contains a main page, with two tables create/delete/search
 #creating new device  / deleting device
@@ -113,11 +116,42 @@ def upload_csv(request):
                     IOP_OS_right=row['OS'] or None,
                     position=row['Position']
                 )
-            return redirect('home')  # Redirect after POST
+            return redirect('home')
     else:
         form = UploadForm()
     return render(request, 'manageApp/upload_csv.html', {'form': form})
 
+#recieve the msg
+@csrf_exempt
+def http_data(request):
+    if request.method == 'POST':
+        try:
+            #Parse JSON data
+            data = json.loads(request.body.decode('utf-8'))
+            
+            vip_number = data.get('Patient ID')
+            date_str = data.get('Date')
+            time_str = data.get('Time')
+            IOP_OD_left = data.get('OD') or None
+            IOP_OS_right = data.get('OS') or None
+            position = data.get('Position')
+            #time conversion
+            capture_date = datetime.strptime(date_str, '%d/%m/%Y').date() if date_str else None
+            capture_time = datetime.strptime(time_str, '%H:%M:%S').time() if time_str else None
+            
+            ReservationData.objects.create(
+                vip_number=vip_number,
+                capture_date=capture_date,
+                capture_time=capture_time,
+                IOP_OD_left=IOP_OD_left,
+                IOP_OS_right=IOP_OS_right,
+                position=position
+            )
+            return JsonResponse({'message': 'Data received successfully'}, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        return JsonResponse({'message': 'Only POST requests are allowed'}, status=405)
 
 def reservation_detail(request, reservation_id):
     print(reservation_id)
@@ -128,16 +162,12 @@ def reservation_detail(request, reservation_id):
     #Convert QuerySet to DataFrame
     df = pd.DataFrame(list(data.values()))
     print(data)
-
     print(df)
     print(df.columns)
     # df['capture_date'] = pd.to_datetime(df['capture_date'], format='%d/%m/%Y')
     df['capture_time'] = pd.to_datetime(df['capture_time'], format='%H:%M:%S')
     print(df['capture_time'])
-    #df['datetime'] = pd.to_datetime(df['capture_date'] + ' ' + df['capture_time'], format='%d/%m/%Y %H:%M:%S')
-    #df['time_slot'] = (df['capture_time'].dt.hour // 2) * 2
-    #df['time_slot'] = df['time_slot'].astype(str) + ":00"
-
+  
     #Plotly figures
 
     fig_left_eye = px.scatter(
@@ -194,4 +224,4 @@ def reservation_detail(request, reservation_id):
         'graph_div_candlestick': graph_div_candlestick,
         'vip_number': reservation_id,
     })
-
+    
